@@ -10,10 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <fx:root type="HBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="TOP_CENTER" fillWidth="false">
+      <VBox alignment="TOP_CENTER">
          <children>
             <Label text="Choix de la Police">
                <VBox.margin>
@@ -42,7 +41,7 @@
                   <Insets top="10.0" />
                </padding>
             </Separator>
-            <VBox>
+            <VBox fx:id="FontChargerHBox">
                <children>
                   <Label text="Changer la Police (.ttf ,.otf)" textAlignment="CENTER">
                      <font>
@@ -64,13 +63,13 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Separator prefWidth="200.0">
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </Separator>
                </children>
             </VBox>
-            <Separator prefWidth="200.0">
-               <padding>
-                  <Insets top="10.0" />
-               </padding>
-            </Separator>
             <VBox alignment="TOP_CENTER">
                <children>
                   <Label text="Taille du texte">

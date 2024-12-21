@@ -1,6 +1,10 @@
 package textinimagegenerator;
 
 import Exeptions.ResourcesFileErrorException;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,6 +47,9 @@ public class TextInImageGenerator extends HBox {
         
         @FXML
         private Slider TextHeighSlideBar;
+        
+        @FXML
+        private HBox FontChargerHBox;
 
         private final BooleanProperty changed = new SimpleBooleanProperty(false);
 
@@ -174,6 +181,20 @@ public class TextInImageGenerator extends HBox {
         public void activatePoliceSelector() {
                 fontSelectorButton.setDisable(false);
         }
+        
+        /**
+         * This function hide the Font charger HBox
+         */
+        public void hideFontCharger(){
+                FontChargerHBox.setVisible(false);
+        }
+        
+        /**
+         * This function show the Font charger HBox
+         */
+        public void showFontCharger(){
+                FontChargerHBox.setVisible(true);
+        }
 
         /**
          * Set the Slide bar parameter
@@ -269,5 +290,68 @@ public class TextInImageGenerator extends HBox {
          */
         public double getTextHeigthValue(){
                 return this.TextHeighSlideBar.getValue();
+        }
+        
+        
+         /**
+     * Generate a BufferedImage with the specified dimensions and an opacity of 0 everywhere except for the text.
+     *
+     * @param dim_x The width of the image.
+     * @param dim_y The height of the image.
+     * @return A BufferedImage with the text drawn on it.
+     */
+    public BufferedImage getImageOut(int dim_x, int dim_y) {
+        BufferedImage image = new BufferedImage(dim_x, dim_y, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+
+        // Set rendering hints for better quality
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        // Clear the image with transparent background
+        g2d.setComposite(java.awt.AlphaComposite.Clear);
+        g2d.fillRect(0, 0, dim_x, dim_y);
+        g2d.setComposite(java.awt.AlphaComposite.SrcOver);
+
+        // Set the font and color
+        g2d.setFont(convertToAwtFont(customFont));
+        g2d.setColor(Color.BLACK);
+
+        // Draw the text
+        String text = textField.getText();
+        int textWidth = g2d.getFontMetrics().stringWidth(text);
+        int textHeight = g2d.getFontMetrics().getAscent();
+        int x = (dim_x - textWidth) / 2;
+        int y = (dim_y + textHeight) / 2;
+        g2d.drawString(text, x, y);
+
+        // Dispose the graphics context
+        g2d.dispose();
+
+        return image;
+    }
+    
+        /**
+         * Convert javaFX font to java awt font
+         *
+         * @param javafxFont
+         * @return
+         */
+        public static java.awt.Font convertToAwtFont(javafx.scene.text.Font javafxFont) {
+                String family = javafxFont.getFamily();
+                float size = (float) javafxFont.getSize();
+
+                int style = java.awt.Font.PLAIN;
+
+                // Determine the style based on FontWeight and FontPosture
+                if (javafxFont.getStyle().equals("Bold")) {
+                        style = java.awt.Font.BOLD;
+                } else if (javafxFont.getStyle().equals("Italic")) {
+                        style = java.awt.Font.ITALIC;
+                } else if (javafxFont.getStyle().equals("Bold Italic")) {
+                        style = java.awt.Font.BOLD | java.awt.Font.ITALIC;
+                }
+
+                return new java.awt.Font(family, style, (int) size);
         }
 }
