@@ -10,105 +10,104 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root type="HBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="TOP_CENTER" type="VBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="TOP_CENTER">
+      <Label text="Choix de la Police">
+         <VBox.margin>
+            <Insets bottom="7.0" left="-20.0" />
+         </VBox.margin>
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <HBox>
          <children>
-            <Label text="Choix de la Police">
-               <VBox.margin>
-                  <Insets bottom="7.0" left="-20.0" />
-               </VBox.margin>
+            <Label text="Texte">
                <font>
-                  <Font size="18.0" />
+                  <Font size="14.0" />
                </font>
             </Label>
-            <HBox>
-               <children>
-                  <Label text="Texte">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="textField" onAction="#refreshText">
-                     <HBox.margin>
-                        <Insets left="15.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
-            </HBox>
-            <Separator prefWidth="200.0">
-               <padding>
-                  <Insets top="10.0" />
-               </padding>
-            </Separator>
-            <VBox fx:id="FontChargerHBox">
-               <children>
-                  <Label text="Changer la Police (.ttf ,.otf)" textAlignment="CENTER">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Button fx:id="fontSelectorButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false">
-                     <graphic>
-                        <Label fx:id="PolicePreview" text="Veuillez Remplacer ce Texte">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Label>
-                     </graphic>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Separator prefWidth="200.0">
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </Separator>
-               </children>
-            </VBox>
-            <VBox alignment="TOP_CENTER">
-               <children>
-                  <Label text="Taille du texte">
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Slider fx:id="textSizeSlideBar">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                     </VBox.margin>
-                  </Slider>
-               </children>
-            </VBox>
-            <Separator prefWidth="200.0" />
-            <VBox alignment="TOP_CENTER">
-               <children>
-                  <Label alignment="TOP_LEFT" text="Décalage de hauteur" textAlignment="CENTER">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Slider fx:id="TextHeighSlideBar">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                     </VBox.margin>
-                  </Slider>
-               </children>
-            </VBox>
+            <TextField fx:id="textField" onAction="#refreshText" onKeyReleased="#refreshText">
+               <HBox.margin>
+                  <Insets left="15.0" />
+               </HBox.margin>
+            </TextField>
          </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </HBox>
+      <VBox fx:id="FontChargerHBox">
+         <children>
+            <Separator prefWidth="200.0" />
+            <Label text="Changer la Police (.ttf ,.otf)" textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Label>
+            <Button fx:id="fontSelectorButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false">
+               <graphic>
+                  <Label fx:id="PolicePreview" text="Veuillez Remplacer ce Texte">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+      <VBox fx:id="VboxTextSize" alignment="TOP_CENTER">
+         <children>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <Label text="Taille du texte">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Slider fx:id="textSizeSlideBar" onMouseDragged="#refreshText">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+               </VBox.margin>
+            </Slider>
+         </children>
+      </VBox>
+      <VBox fx:id="VboxTextHeight" alignment="TOP_CENTER">
+         <children>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <Label alignment="TOP_LEFT" text="Décalage de hauteur" textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Label>
+            <Slider fx:id="TextHeighSlideBar" onMouseDragged="#refreshText">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+               </VBox.margin>
+            </Slider>
+         </children>
       </VBox>
    </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
 </fx:root>
