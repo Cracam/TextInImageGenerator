@@ -128,7 +128,7 @@ public class TextInImageGenerator extends VBox {
          * Refrash the font and the size of the text
          */
         private void refreshFont() {
-                if (customFontFX != null & fontChanged == true ) {
+                if (customFontFX != null & fontChanged == true) {
                         PolicePreview.setFont(customFontFX);
                         fontChanged = false;
                 }
@@ -181,8 +181,7 @@ public class TextInImageGenerator extends VBox {
         public void desactivateFontCharger() {
                 FontChargerHBox.setVisible(false);
                 FontChargerHBox.setDisable(true);
-                                FontChargerHBox.setManaged(false);
-
+                FontChargerHBox.setManaged(false);
 
         }
 
@@ -199,7 +198,7 @@ public class TextInImageGenerator extends VBox {
         public void desactivateTextHeighSlideBar() {
                 VboxTextHeight.setVisible(false);
                 VboxTextHeight.setDisable(true);
-                                VboxTextHeight.setManaged(false);
+                VboxTextHeight.setManaged(false);
 
         }
 
@@ -246,52 +245,50 @@ public class TextInImageGenerator extends VBox {
         }
 
         /**
- * Load a text policie file (.ttf add other if you want)
- */
-public void loadPolicie() {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select Font File");
-    fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Font Files", "*.ttf", "*.otf")
-    );
+         * Load a text policie file (.ttf add other if you want)
+         */
+        public void loadPolicie() {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select Font File");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Font Files", "*.ttf", "*.otf")
+                );
 
-    File selectedFile = fileChooser.showOpenDialog(new Stage());
-    if (selectedFile != null) {
-       loadNewFont(selectedFile);
-    }
-}
-
-public void loadNewFont(File selectedFile){
-         try {
-            fontFile = selectedFile;
-            // Load the font using AWT
-            java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
-            awtFont = awtFont.deriveFont((float) 10.0);
-
-            // Convert AWT font to JavaFX font
-            customFontAwt = awtFont;
-            customFontFX = javafx.scene.text.Font.loadFont(selectedFile.toURI().toString(), 10);
-
-            if (customFontFX != null) {
-                PolicePreview.setFont(customFontFX);
-                fontChanged = true;
-              
-            }
-            refreshFont();
-                refreshText();
-        } catch (FontFormatException | IOException e) {
-            Logger.getLogger(TextInImageGenerator.class.getName()).log(Level.SEVERE, "Exception while loading font: " + e.getMessage());
+                File selectedFile = fileChooser.showOpenDialog(new Stage());
+                if (selectedFile != null) {
+                        loadNewFont(selectedFile);
+                }
         }
-}
 
+        public void loadNewFont(File selectedFile) {
+                try {
+                        fontFile = selectedFile;
+                        // Load the font using AWT
+                        java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
+                        awtFont = awtFont.deriveFont((float) 10.0);
+
+                        // Convert AWT font to JavaFX font
+                        customFontAwt = awtFont;
+                        customFontFX = javafx.scene.text.Font.loadFont(selectedFile.toURI().toString(), 10);
+
+                        if (customFontFX != null) {
+                                PolicePreview.setFont(customFontFX);
+                                fontChanged = true;
+
+                        }
+                        refreshFont();
+                        refreshText();
+                } catch (FontFormatException | IOException e) {
+                        Logger.getLogger(TextInImageGenerator.class.getName()).log(Level.SEVERE, "Exception while loading font: " + e.getMessage());
+                }
+        }
 
         public static java.awt.Font changeFontSize(java.awt.Font customFont, double newSize) {
                 // Create a new font with the same family but new size
-            ///    return new java.awt.Font(customFont.getFamily(),PLAIN , (int) newSize);
-                return  customFont.deriveFont((float) newSize);
+                ///    return new java.awt.Font(customFont.getFamily(),PLAIN , (int) newSize);
+                return customFont.deriveFont((float) newSize);
 
         }
-
 
         public File getFontFile() {
                 return this.fontFile;
@@ -330,7 +327,9 @@ public void loadNewFont(File selectedFile){
                 this.textSizeSlideBar.setValue(textSize);
         }
 
-        /**
+                
+                
+                  /**
          * Generate a BufferedImage with the specified dimensions and an opacity
          * of 0 everywhere except for the text.
          *
@@ -341,6 +340,25 @@ public void loadNewFont(File selectedFile){
          * @return A BufferedImage with the text drawn on it.
          */
         public BufferedImage getImageOut(float size_factor, float textSizeMin, float textSizeMax) {
+                return getImageOut(textField.getText(),size_factor,textSizeMin,textSizeMax);
+         }
+                
+                
+                
+                
+                
+        /**
+         * Generate a BufferedImage with the specified dimensions and an opacity
+         * of 0 everywhere except for the text.
+         *
+         * @param text
+         * @param size_factor The factor by which to scale the text size to IN
+         * pixel determine the image dimensions.
+         * @param textSizeMin
+         * @param textSizeMax
+         * @return A BufferedImage with the text drawn on it.
+         */
+        public BufferedImage getImageOut(String text, float size_factor, float textSizeMin, float textSizeMax) {
 
                 // Create a temporary BufferedImage to measure the text size
                 BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -351,22 +369,19 @@ public void loadNewFont(File selectedFile){
                 tempG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
                 // Set the font
-                System.out.println("size_factor :   " + size_factor);
-                double textSize= (textSizeMin+textSizeSlideBar.getValue()*(textSizeMax-textSizeMin)) * size_factor* 72 / 96;
+                double textSize = (textSizeMin + textSizeSlideBar.getValue() * (textSizeMax - textSizeMin)) * size_factor * 72 / 96;
                 tempG2d.setFont(changeFontSize(customFontAwt, textSize));
 
                 // Measure the text size
-                String text = textField.getText();
-                 FontMetrics fontMetrics = tempG2d.getFontMetrics();
+                FontMetrics fontMetrics = tempG2d.getFontMetrics();
                 int textWidth = fontMetrics.stringWidth(text);
                 if (textWidth == 0) {
                         textWidth = 2;
                 }
                 int textHeight = fontMetrics.getHeight();
-                        
+
                 // Dispose the temporary graphics context
                 tempG2d.dispose();
-
 
                 // Create the final BufferedImage with the calculated dimensions
                 BufferedImage image = new BufferedImage((int) (textWidth), (int) (textHeight * 2), BufferedImage.TYPE_INT_ARGB);
@@ -382,7 +397,7 @@ public void loadNewFont(File selectedFile){
                 g2d.setComposite(java.awt.AlphaComposite.SrcOver);
 
                 // Set the font and color
-                g2d.setFont(changeFontSize(customFontAwt,textSize));
+                g2d.setFont(changeFontSize(customFontAwt, textSize));
                 g2d.setColor(Color.BLACK);
 
                 // Draw the text centered in the image
@@ -392,5 +407,12 @@ public void loadNewFont(File selectedFile){
                 g2d.dispose();
 
                 return image;
-                }
+        }
+        
+        
+        public void setText(String text){
+                this.textField.setText(text);
+        }
+        
+        
 }
