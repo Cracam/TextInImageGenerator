@@ -2,13 +2,16 @@ package textinimagegenerator;
 
 import Exeptions.ResourcesFileErrorException;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
@@ -262,14 +265,30 @@ public class TextInImageGenerator extends VBox {
 
         public void loadNewFont(File selectedFile) {
                 try {
-                        fontFile = selectedFile;
-                        // Load the font using AWT
+                         fontFile = selectedFile;
                         java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
+                          javafx.scene.text.Font FXFont = javafx.scene.text.Font.loadFont(selectedFile.toURI().toString(), 10);
+
+                        DRYloadNewFont(awtFont,FXFont);
+                } catch (FontFormatException | IOException e) {
+                        Logger.getLogger(TextInImageGenerator.class.getName()).log(Level.SEVERE, "Exception while loading font: " + e.getMessage());
+                }
+        }
+
+        public void loadNewFont(byte[] fontBytes) {
+                Font awtFont = createFontFromBytes(fontBytes);
+                javafx.scene.text.Font FXFont = createFXFontFromBytes(fontBytes);
+                DRYloadNewFont(awtFont,FXFont);
+        }
+                
+        private void DRYloadNewFont( Font awtFont,javafx.scene.text.Font FXFont ) {
+                        // Load the font using AWT
+                   //     java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
                         awtFont = awtFont.deriveFont((float) 10.0);
 
                         // Convert AWT font to JavaFX font
                         customFontAwt = awtFont;
-                        customFontFX = javafx.scene.text.Font.loadFont(selectedFile.toURI().toString(), 10);
+                        customFontFX = FXFont;
 
                         if (customFontFX != null) {
                                 PolicePreview.setFont(customFontFX);
@@ -278,9 +297,7 @@ public class TextInImageGenerator extends VBox {
                         }
                         refreshFont();
                         refreshText();
-                } catch (FontFormatException | IOException e) {
-                        Logger.getLogger(TextInImageGenerator.class.getName()).log(Level.SEVERE, "Exception while loading font: " + e.getMessage());
-                }
+               
         }
 
         public static java.awt.Font changeFontSize(java.awt.Font customFont, double newSize) {
@@ -414,5 +431,30 @@ public class TextInImageGenerator extends VBox {
                 this.textField.setText(text);
         }
         
+        public static Font createFontFromBytes(byte[] fontBytes) {
+        try (InputStream inputStream = new ByteArrayInputStream(fontBytes)) {
+            // Create the font from the input stream
+            Font awtFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+            return awtFont;
+        } catch (FontFormatException e) {
+            System.err.println("Invalid font format: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Error reading font data: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
         
+        public static  javafx.scene.text.Font createFXFontFromBytes(byte[] fontBytes) {
+    try (InputStream inputStream = new ByteArrayInputStream(fontBytes)) {
+        // Load the font from the input stream
+         javafx.scene.text.Font font =  javafx.scene.text.Font.loadFont(inputStream, 10); // 12 is the default size
+        return font;
+    } catch (Exception e) {
+        System.err.println("Error loading font: " + e.getMessage());
+        e.printStackTrace();
+    }
+    return null;
+}
 }

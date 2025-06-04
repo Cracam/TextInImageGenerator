@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root alignment="TOP_CENTER" type="VBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="TOP_CENTER" maxHeight="272.0" maxWidth="302.0" type="VBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label text="Choix de la Police">
          <VBox.margin>
@@ -27,7 +27,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="textField" onAction="#refreshText" onKeyReleased="#refreshText">
+            <TextField fx:id="textField" onAction="#refreshText" onKeyReleased="#refreshText" prefHeight="25.0" prefWidth="217.0">
                <HBox.margin>
                   <Insets left="15.0" />
                </HBox.margin>
@@ -50,7 +50,7 @@
             </Label>
             <Button fx:id="fontSelectorButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false">
                <graphic>
-                  <Label fx:id="PolicePreview" text="Veuillez Remplacer ce Texte">
+                  <Label fx:id="PolicePreview" text="Cliquez ici pour changer la Police">
                      <font>
                         <Font size="18.0" />
                      </font>
