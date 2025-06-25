@@ -69,6 +69,8 @@ public class TextInImageGenerator extends VBox {
         private static final String PLACEHOLDER_TEXT = "Veuillez Remplacer ce Texte";
 
         private File fontFile;
+        
+        private byte[] fontData;
 
         public TextInImageGenerator() {
                 try {
@@ -276,6 +278,7 @@ public class TextInImageGenerator extends VBox {
         }
 
         public void loadNewFont(byte[] fontBytes) {
+                fontData=fontBytes;
                 Font awtFont = createFontFromBytes(fontBytes);
                 javafx.scene.text.Font FXFont = createFXFontFromBytes(fontBytes);
                 DRYloadNewFont(awtFont,FXFont);
@@ -307,9 +310,7 @@ public class TextInImageGenerator extends VBox {
 
         }
 
-        public File getFontFile() {
-                return this.fontFile;
-        }
+     
 
         /**
          * return the text write by the user
@@ -376,7 +377,9 @@ public class TextInImageGenerator extends VBox {
          * @return A BufferedImage with the text drawn on it.
          */
         public BufferedImage getImageOut(String text, float size_factor, float textSizeMin, float textSizeMax) {
-
+                //ensure that the police support the special letter or replace tem by the raw ones
+                text=FontUtils.replaceUnsupportedCharacters(customFontAwt,text);
+                
                 // Create a temporary BufferedImage to measure the text size
                 BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D tempG2d = tempImage.createGraphics();
@@ -431,30 +434,45 @@ public class TextInImageGenerator extends VBox {
                 this.textField.setText(text);
         }
         
-        public static Font createFontFromBytes(byte[] fontBytes) {
-        try (InputStream inputStream = new ByteArrayInputStream(fontBytes)) {
-            // Create the font from the input stream
-            Font awtFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-            return awtFont;
-        } catch (FontFormatException e) {
-            System.err.println("Invalid font format: " + e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("Error reading font data: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
-    }
         
-        public static  javafx.scene.text.Font createFXFontFromBytes(byte[] fontBytes) {
-    try (InputStream inputStream = new ByteArrayInputStream(fontBytes)) {
-        // Load the font from the input stream
-         javafx.scene.text.Font font =  javafx.scene.text.Font.loadFont(inputStream, 10); // 12 is the default size
-        return font;
-    } catch (Exception e) {
-        System.err.println("Error loading font: " + e.getMessage());
-        e.printStackTrace();
-    }
-    return null;
-}
+        
+        //those two function are the tow output for font
+        public  byte[] getFontBytes(){
+                return fontData;
+        }
+           public File getFontFile() {
+                return this.fontFile;
+        }
+
+        public static Font createFontFromBytes(byte[] fontBytes) {
+                try (InputStream inputStream = new ByteArrayInputStream(fontBytes)) {
+                        // Create the font from the input stream
+                        Font awtFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+                        return awtFont;
+                } catch (FontFormatException e) {
+                        System.err.println("Invalid font format: " + e.getMessage());
+                        e.printStackTrace();
+                } catch (IOException e) {
+                        System.err.println("Error reading font data: " + e.getMessage());
+                        e.printStackTrace();
+                }
+                return null;
+        }
+
+        public static javafx.scene.text.Font createFXFontFromBytes(byte[] fontBytes) {
+                try (InputStream inputStream = new ByteArrayInputStream(fontBytes)) {
+                        // Load the font from the input stream
+                        javafx.scene.text.Font font = javafx.scene.text.Font.loadFont(inputStream, 10); // 12 is the default size
+                        return font;
+                } catch (Exception e) {
+                        System.err.println("Error loading font: " + e.getMessage());
+                        e.printStackTrace();
+                }
+                return null;
+        }
+
+     
+        
+        
+
 }
