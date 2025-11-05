@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
@@ -69,7 +70,7 @@ public class TextInImageGenerator extends VBox {
         private static final String PLACEHOLDER_TEXT = "Veuillez Remplacer ce Texte";
 
         private File fontFile;
-        
+
         private byte[] fontData;
 
         public TextInImageGenerator() {
@@ -267,40 +268,41 @@ public class TextInImageGenerator extends VBox {
 
         public void loadNewFont(File selectedFile) {
                 try {
-                         fontFile = selectedFile;
+                        fontFile = selectedFile;
+                        fontData=fileToBytes(selectedFile);
                         java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
-                          javafx.scene.text.Font FXFont = javafx.scene.text.Font.loadFont(selectedFile.toURI().toString(), 10);
+                        javafx.scene.text.Font FXFont = javafx.scene.text.Font.loadFont(selectedFile.toURI().toString(), 10);
 
-                        DRYloadNewFont(awtFont,FXFont);
+                        DRYloadNewFont(awtFont, FXFont);
                 } catch (FontFormatException | IOException e) {
                         Logger.getLogger(TextInImageGenerator.class.getName()).log(Level.SEVERE, "Exception while loading font: " + e.getMessage());
                 }
         }
 
         public void loadNewFont(byte[] fontBytes) {
-                fontData=fontBytes;
+                fontData = fontBytes;
                 Font awtFont = createFontFromBytes(fontBytes);
                 javafx.scene.text.Font FXFont = createFXFontFromBytes(fontBytes);
-                DRYloadNewFont(awtFont,FXFont);
+                DRYloadNewFont(awtFont, FXFont);
         }
-                
-        private void DRYloadNewFont( Font awtFont,javafx.scene.text.Font FXFont ) {
-                        // Load the font using AWT
-                   //     java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
-                        awtFont = awtFont.deriveFont((float) 10.0);
 
-                        // Convert AWT font to JavaFX font
-                        customFontAwt = awtFont;
-                        customFontFX = FXFont;
+        private void DRYloadNewFont(Font awtFont, javafx.scene.text.Font FXFont) {
+                // Load the font using AWT
+                //     java.awt.Font awtFont = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, selectedFile);
+                awtFont = awtFont.deriveFont((float) 10.0);
 
-                        if (customFontFX != null) {
-                                PolicePreview.setFont(customFontFX);
-                                fontChanged = true;
+                // Convert AWT font to JavaFX font
+                customFontAwt = awtFont;
+                customFontFX = FXFont;
 
-                        }
-                        refreshFont();
-                        refreshText();
-               
+                if (customFontFX != null) {
+                        PolicePreview.setFont(customFontFX);
+                        fontChanged = true;
+
+                }
+                refreshFont();
+                refreshText();
+
         }
 
         public static java.awt.Font changeFontSize(java.awt.Font customFont, double newSize) {
@@ -309,8 +311,6 @@ public class TextInImageGenerator extends VBox {
                 return customFont.deriveFont((float) newSize);
 
         }
-
-     
 
         /**
          * return the text write by the user
@@ -345,9 +345,7 @@ public class TextInImageGenerator extends VBox {
                 this.textSizeSlideBar.setValue(textSize);
         }
 
-                
-                
-                  /**
+        /**
          * Generate a BufferedImage with the specified dimensions and an opacity
          * of 0 everywhere except for the text.
          *
@@ -358,13 +356,9 @@ public class TextInImageGenerator extends VBox {
          * @return A BufferedImage with the text drawn on it.
          */
         public BufferedImage getImageOut(float size_factor, float textSizeMin, float textSizeMax) {
-                return getImageOut(textField.getText(),size_factor,textSizeMin,textSizeMax);
-         }
-                
-                
-                
-                
-                
+                return getImageOut(textField.getText(), size_factor, textSizeMin, textSizeMax);
+        }
+
         /**
          * Generate a BufferedImage with the specified dimensions and an opacity
          * of 0 everywhere except for the text.
@@ -378,8 +372,8 @@ public class TextInImageGenerator extends VBox {
          */
         public BufferedImage getImageOut(String text, float size_factor, float textSizeMin, float textSizeMax) {
                 //ensure that the police support the special letter or replace tem by the raw ones
-                text=FontUtils.replaceUnsupportedCharacters(customFontAwt,text);
-                
+                text = FontUtils.replaceUnsupportedCharacters(customFontAwt, text);
+
                 // Create a temporary BufferedImage to measure the text size
                 BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D tempG2d = tempImage.createGraphics();
@@ -428,19 +422,17 @@ public class TextInImageGenerator extends VBox {
 
                 return image;
         }
-        
-        
-        public void setText(String text){
+
+        public void setText(String text) {
                 this.textField.setText(text);
         }
-        
-        
-        
+
         //those two function are the tow output for font
-        public  byte[] getFontBytes(){
+        public byte[] getFontBytes() {
                 return fontData;
         }
-           public File getFontFile() {
+
+        public File getFontFile() {
                 return this.fontFile;
         }
 
@@ -471,8 +463,24 @@ public class TextInImageGenerator extends VBox {
                 return null;
         }
 
-     
-        
-        
+        /**
+         * Transforme un fichier en tableau de bytes (byte[])
+         *
+         * @param file Le fichier à lire
+         * @return Les bytes du fichier, ou null en cas d'erreur
+         */
+        public static byte[] fileToBytes(File file) {
+                if (file == null || !file.exists() || !file.isFile()) {
+                        return null;
+                }
+
+                try {
+                        return Files.readAllBytes(file.toPath());
+                } catch (IOException e) {
+                        Logger.getLogger(TextInImageGenerator.class.getName())
+                                .log(Level.SEVERE, "Erreur lors de la lecture du fichier : " + file.getName(), e);
+                        return null;
+                }
+        }
 
 }
